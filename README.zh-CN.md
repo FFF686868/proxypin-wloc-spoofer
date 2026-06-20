@@ -1,6 +1,18 @@
-# ProxyPin WLOC 响应重写脚本
+<h1 align="center">ProxyPin WLOC 响应重写脚本</h1>
 
-中文 | [English](README.md)
+<p align="center">
+  中文 · <a href="README.md">English</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/FFF686868/proxypin-wloc-spoofer/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/FFF686868/proxypin-wloc-spoofer?style=for-the-badge&logo=github&label=STARS&color=0891b2"></a>
+  <a href="https://github.com/FFF686868/proxypin-wloc-spoofer/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/FFF686868/proxypin-wloc-spoofer?style=for-the-badge&logo=github&label=FORKS&color=0284c7"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/LICENSE-MIT-16a34a?style=for-the-badge"></a>
+  <img alt="Status" src="https://img.shields.io/badge/STATUS-RESEARCH-f97316?style=for-the-badge">
+  <img alt="ProxyPin" src="https://img.shields.io/badge/PROXYPIN-SCRIPT-334155?style=for-the-badge">
+  <img alt="Local Script" src="https://img.shields.io/badge/LOCAL-SCRIPT-7c3aed?style=for-the-badge">
+  <img alt="Open Source" src="https://img.shields.io/badge/OPEN--SOURCE-0f9f6e?style=for-the-badge">
+</p>
 
 这是一个用于授权 iOS 定位测试的 ProxyPin 脚本。它拦截 Apple WLOC
 接口响应：
