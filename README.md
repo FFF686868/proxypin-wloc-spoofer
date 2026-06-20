@@ -1,7 +1,7 @@
 <h1 align="center">ProxyPin WLOC Response Rewriter</h1>
 
 <p align="center">
-  <img src="assets/cover.svg" alt="ProxyPin WLOC Response Rewriter cover">
+  <img src="assets/cover.jpg" alt="ProxyPin WLOC Response Rewriter cover">
 </p>
 
 <p align="center">

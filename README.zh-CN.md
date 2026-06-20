@@ -1,7 +1,7 @@
 <h1 align="center">ProxyPin WLOC 响应重写脚本</h1>
 
 <p align="center">
-  <img src="assets/cover.svg" alt="ProxyPin WLOC 响应重写脚本封面">
+  <img src="assets/cover.jpg" alt="ProxyPin WLOC 响应重写脚本封面">
 </p>
 
 <p align="center">
