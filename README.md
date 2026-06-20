@@ -35,6 +35,18 @@ location data, or interfere with devices or networks without permission.
 - Returns debug headers such as `X-WLOC-ProxyPin`, `X-WLOC-Patched-Locations`,
   and `X-WLOC-Error`.
 
+## Requirements
+
+This repository is only a JavaScript script for ProxyPin. It is not a standalone
+app, proxy server, or iOS profile.
+
+You need:
+
+- ProxyPin with script support.
+- An iOS test device.
+- ProxyPin CA installed and trusted on that device.
+- HTTPS capture enabled in ProxyPin.
+
 ## Files
 
 - `proxypin_wloc_compat_v2.js`: ProxyPin JavaScript script.
@@ -90,3 +102,9 @@ This project is intended for:
 
 This modifies Apple network-location WLOC responses. It does not directly modify
 GPS hardware readings, and iOS may prefer real GPS when GPS signal is strong.
+
+## References
+
+- ProxyPin project: <https://github.com/wanghongenpin/proxypin>
+- ProxyPin script documentation: <https://github.com/wanghongenpin/proxypin/wiki/Script>
+- pako gzip library: <https://github.com/nodeca/pako>
