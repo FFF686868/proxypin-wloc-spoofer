@@ -10,7 +10,7 @@
 
 - 一台 iPhone。
 - ProxyPin。
-- 本项目脚本：`proxypin_wloc_compat_v2.js`。
+- 本项目脚本：[`proxypin_wloc_compat_v2.js`](../../proxypin_wloc_compat_v2.js)。
 - 一个可以正常联网的 Wi-Fi。
 - 一个用于验证定位变化的 App 或系统定位入口。
 
@@ -92,7 +92,7 @@ gs-loc.apple.com
 
 <img src="../assets/zh-CN/tutorial/12-add-script.jpg" alt="添加脚本" width="360">
 
-把本项目的 `proxypin_wloc_compat_v2.js` 完整复制到脚本编辑器中。
+把本项目的 [`proxypin_wloc_compat_v2.js`](../../proxypin_wloc_compat_v2.js) 完整复制到脚本编辑器中。
 
 匹配 URL 填写：
 
