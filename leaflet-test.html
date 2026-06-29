@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Leaflet Location Test</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f8fb;
+      color: #172033;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      background: #fff;
+      border-bottom: 1px solid #d9dee8;
+      box-shadow: 0 1px 8px rgba(16, 24, 40, .07);
+      position: relative;
+      z-index: 1000;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    button {
+      height: 36px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 12px;
+      background: #2563eb;
+      color: #fff;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #475569;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .7;
+    }
+
+    .status {
+      min-width: 0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #26356f;
+      font-size: 14px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .map-wrap {
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 50vh;
+      min-height: 300px;
+      background: #edf1f5;
+    }
+
+    .layers {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 1000;
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .16);
+    }
+
+    .layer-btn {
+      height: 30px;
+      padding: 0 9px;
+      border-radius: 6px;
+      background: transparent;
+      color: #172033;
+      font-size: 12px;
+    }
+
+    .layer-btn.active {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .coords {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    /* Critical Leaflet layout fallback. Keeps tiles aligned if leaflet.css is slow. */
+    .leaflet-pane,
+    .leaflet-tile,
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow,
+    .leaflet-tile-container,
+    .leaflet-pane > svg,
+    .leaflet-pane > canvas,
+    .leaflet-zoom-box,
+    .leaflet-image-layer,
+    .leaflet-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .leaflet-container {
+      overflow: hidden;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .leaflet-tile,
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .leaflet-top,
+    .leaflet-bottom {
+      position: absolute;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .leaflet-top {
+      top: 0;
+    }
+
+    .leaflet-bottom {
+      bottom: 0;
+    }
+
+    .leaflet-left {
+      left: 0;
+    }
+
+    .leaflet-right {
+      right: 0;
+    }
+
+    .leaflet-control {
+      position: relative;
+      z-index: 800;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      h1,
+      button,
+      .status {
+        width: 100%;
+      }
+
+      #map {
+        height: 44vh;
+        min-height: 280px;
+      }
+
+      .layers {
+        right: 8px;
+        top: 8px;
+      }
+
+      .layer-btn {
+        padding: 0 7px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Leaflet Location Test</h1>
+    <button id="locateButton" type="button">Use GPS</button>
+    <div id="status" class="status">Map loading. Default: Shenzhen Nanshan. Click the map to inspect coordinates.</div>
+  </header>
+
+  <div class="map-wrap">
+    <main id="map" aria-label="Leaflet test map"></main>
+    <div class="layers" aria-label="Map layers">
+      <button class="layer-btn active" type="button" data-layer="wgs84">WGS84</button>
+      <button class="layer-btn" type="button" data-layer="satellite">Satellite</button>
+      <button class="layer-btn" type="button" data-layer="osm">OSM</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const defaultLocation = {
+      lat: 22.544577,
+      lng: 113.94114,
+      label: "Default test point"
+    };
+
+    const statusEl = document.querySelector("#status");
+    const locateButton = document.querySelector("#locateButton");
+
+    const map = L.map("map", {
+      preferCanvas: true,
+      zoomControl: true,
+      attributionControl: true
+    }).setView([defaultLocation.lat, defaultLocation.lng], 15);
+
+    const tileLayers = {
+      wgs84: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19,
+        attribution: "ArcGIS WGS84"
+      }),
+      satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19,
+        attribution: "ArcGIS"
+      }),
+      osm: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      })
+    };
+
+    let activeLayer = tileLayers.wgs84.addTo(map);
+    let activeMarker = L.marker([defaultLocation.lat, defaultLocation.lng])
+      .addTo(map)
+      .bindPopup(`${defaultLocation.label}<br><span class="coords">${formatCoords(defaultLocation)}</span>`)
+      .openPopup();
+
+    L.circle([defaultLocation.lat, defaultLocation.lng], {
+      radius: 25,
+      color: "#2563eb",
+      fillColor: "#3b82f6",
+      fillOpacity: 0.16,
+      weight: 2
+    }).addTo(map);
+
+    document.querySelectorAll(".layer-btn").forEach((button) => {
+      button.addEventListener("click", () => switchLayer(button.dataset.layer));
+    });
+
+    map.on("click", (event) => {
+      const point = {
+        lat: event.latlng.lat,
+        lng: event.latlng.lng
+      };
+      setMarker(point, "Map click");
+      setStatus(`Clicked: ${formatCoords(point)}`);
+    });
+
+    locateButton.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        setStatus("navigator.geolocation is unavailable.");
+        return;
+      }
+
+      locateButton.disabled = true;
+      setStatus("Requesting browser location permission...");
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const point = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          const accuracy = Math.round(position.coords.accuracy || 25);
+
+          setMarker(point, `Browser location, about ${accuracy}m accuracy`);
+          L.circle([point.lat, point.lng], {
+            radius: accuracy,
+            color: "#16a34a",
+            fillColor: "#22c55e",
+            fillOpacity: 0.12,
+            weight: 2
+          }).addTo(map);
+          map.setView([point.lat, point.lng], accuracy > 1000 ? 12 : 16);
+          setStatus(`Browser location: ${formatCoords(point)}, about ${accuracy}m accuracy`);
+          locateButton.disabled = false;
+        },
+        (error) => {
+          setStatus(`Location failed: ${geolocationErrorMessage(error)}.`);
+          locateButton.disabled = false;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 0
+        }
+      );
+    });
+
+    map.whenReady(() => {
+      map.invalidateSize();
+      setStatus(`Map ready: ${formatCoords(defaultLocation)}. Click the map to inspect coordinates.`);
+      setTimeout(() => map.invalidateSize(), 250);
+    });
+
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(() => map.invalidateSize()).observe(document.querySelector("#map"));
+    }
+
+    function switchLayer(name) {
+      if (!tileLayers[name] || tileLayers[name] === activeLayer) return;
+      map.removeLayer(activeLayer);
+      activeLayer = tileLayers[name].addTo(map);
+      document.querySelectorAll(".layer-btn").forEach((button) => {
+        button.classList.toggle("active", button.dataset.layer === name);
+      });
+      setTimeout(() => map.invalidateSize(), 50);
+    }
+
+    function setMarker(point, label) {
+      activeMarker
+        .setLatLng([point.lat, point.lng])
+        .bindPopup(`${label}<br><span class="coords">${formatCoords(point)}</span>`)
+        .openPopup();
+    }
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    function formatCoords(point) {
+      return `${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`;
+    }
+
+    function geolocationErrorMessage(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          return "permission denied";
+        case error.POSITION_UNAVAILABLE:
+          return "position unavailable";
+        case error.TIMEOUT:
+          return "request timed out";
+        default:
+          return error.message || "unknown error";
+      }
+    }
+  </script>
+</body>
+</html>

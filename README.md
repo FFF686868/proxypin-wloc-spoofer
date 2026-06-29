@@ -64,6 +64,8 @@ You need:
 ## Files
 
 - `proxypin_wloc_compat_v2.js`: ProxyPin JavaScript script.
+- `proxypin-scripts.json`: ProxyPin import file with the script and URL rules.
+- `leaflet-test.html`: Standalone Leaflet test page for local browser checks.
 - `LICENSE`: MIT license for this project.
 - `NOTICE`: Third-party notice for pako.
 
@@ -73,22 +75,36 @@ Use the script locally in ProxyPin. Do not rely on a remote script URL.
 
 Chinese step-by-step tutorial with screenshots: [ProxyPin WLOC tutorial](docs/zh-CN/tutorial.md).
 
+### Import JSON
+
+1. In ProxyPin, open the script management page.
+2. Import `proxypin-scripts.json`.
+3. Make sure the imported script is enabled.
+4. Make sure HTTPS capture is enabled and the ProxyPin CA is trusted.
+5. Open `https://www.baidu.com/` through the proxied device.
+6. Pick a location on the Leaflet map and tap `Save`.
+7. Trigger iOS location on the test device.
+
+The import file already matches these URLs:
+
+   - `www.baidu.com/*`
+   - `gs-loc-cn.apple.com/clls/wloc`
+   - `gs-loc.apple.com/clls/wloc`
+
+### Manual Script Setup
+
+If you do not want to import JSON:
+
 1. Open `proxypin_wloc_compat_v2.js`.
 2. Copy the full script content.
 3. In ProxyPin, create a new local script.
-4. Match these URLs:
-   - `gs-loc-cn.apple.com/clls/wloc`
-   - `gs-loc.apple.com/clls/wloc`
+4. Match the URLs listed above.
 5. Paste the script into ProxyPin.
-6. Edit the target coordinates in the pasted local script.
-7. Install and trust the ProxyPin CA certificate on the iOS test device.
-8. Enable HTTPS capture in ProxyPin.
-9. Trigger location on the test device.
 
 The script is working when the intercepted WLOC response contains headers like:
 
 ```text
-X-WLOC-ProxyPin: v5.3.0
+X-WLOC-ProxyPin: v5.4.2
 X-WLOC-Origin-Status: 200
 X-WLOC-Patched-Locations: 1
 ```
@@ -98,7 +114,11 @@ request before the response could be rewritten.
 
 ## Change Coordinates
 
-Edit these constants in the local ProxyPin script:
+The recommended flow is to open `https://www.baidu.com/`, pick a location on
+the Leaflet map, and tap `Save`. The selected coordinates are stored in
+ProxyPin `context.session` and reused by later WLOC responses.
+
+If no location has been saved yet, the script falls back to these constants:
 
 ```js
 var TARGET_LONGITUDE = 113.94114;

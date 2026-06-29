@@ -10,7 +10,8 @@
 
 - 一台 iPhone。
 - ProxyPin。
-- 本项目脚本：[`proxypin_wloc_compat_v2.js`](../../proxypin_wloc_compat_v2.js)。
+- 本项目导入文件：[`proxypin-scripts.json`](../../proxypin-scripts.json)。
+- 本项目脚本：[`proxypin_wloc_compat_v2.js`](../../proxypin_wloc_compat_v2.js)，用于手动新建脚本时复制。
 - 一个可以正常联网的 Wi-Fi。
 - 一个用于验证定位变化的 App 或系统定位入口。
 
@@ -68,7 +69,11 @@
 
 <img src="../assets/zh-CN/tutorial/09-disable-domain-blacklist.jpg" alt="关闭代理域名黑名单" width="360">
 
-开启“代理域名白名单”，并添加 Apple WLOC 域名：
+开启“代理域名白名单”，并添加选点页面域名和 Apple WLOC 域名：
+
+```text
+www.baidu.com
+```
 
 ```text
 gs-loc-cn.apple.com
@@ -82,13 +87,23 @@ gs-loc.apple.com
 
 <img src="../assets/zh-CN/tutorial/10-enable-domain-whitelist.jpg" alt="开启代理域名白名单" width="360">
 
-## 6. 添加本地脚本
+## 6. 导入或添加脚本
 
 进入 ProxyPin 的“脚本”设置。
 
 <img src="../assets/zh-CN/tutorial/11-script-settings.jpg" alt="进入脚本设置" width="360">
 
-点击添加脚本。
+推荐直接导入本项目提供的 `proxypin-scripts.json`。导入文件已经包含脚本内容和匹配规则：
+
+```text
+www.baidu.com/*
+gs-loc-cn.apple.com/clls/wloc
+gs-loc.apple.com/clls/wloc
+```
+
+导入后，确认脚本处于启用状态。
+
+如果你的 ProxyPin 版本不方便导入 JSON，也可以点击添加脚本，手动创建。
 
 <img src="../assets/zh-CN/tutorial/12-add-script.jpg" alt="添加脚本" width="360">
 
@@ -97,17 +112,30 @@ gs-loc.apple.com
 匹配 URL 填写：
 
 ```text
+www.baidu.com/*
 gs-loc-cn.apple.com/clls/wloc
 gs-loc.apple.com/clls/wloc
 ```
 
 <img src="../assets/zh-CN/tutorial/13-edit-script.jpg" alt="编辑脚本" width="360">
 
-建议先在外部文本编辑器里改好经纬度，再复制到 ProxyPin。ProxyPin 的脚本编辑器在长脚本下可能比较卡。
+建议优先使用 JSON 导入方式。ProxyPin 的脚本编辑器在长脚本下可能比较卡。
 
-## 7. 修改目标坐标
+## 7. 设置目标坐标
 
-在脚本中找到：
+保存并启用脚本后，在走 ProxyPin 代理的测试设备上打开：
+
+```text
+https://www.baidu.com/
+```
+
+页面会被脚本替换成 WLOC Location Picker。点击地图或使用 `Use GPS` 选择位置，确认坐标后点击 `Save`。
+
+<img src="../assets/zh-CN/tutorial/设置坐标的页面图.jpg" alt="WLOC Location Picker 设置坐标页面" width="360">
+
+点击 `Save` 后，坐标会保存到 ProxyPin 的 `context.session` 中。后续 Apple WLOC 响应会自动使用这组坐标。
+
+如果还没有保存过坐标，脚本会使用默认值：
 
 ```js
 var TARGET_LONGITUDE = 113.94114;
@@ -115,22 +143,20 @@ var TARGET_LATITUDE = 22.544577;
 var TARGET_ACCURACY = 25;
 ```
 
-改成你要测试的位置。
-
-如果不知道经纬度，可以使用高德坐标拾取器：
-
-<img src="../assets/zh-CN/tutorial/18-amap-coordinate-picker.jpg" alt="高德坐标拾取器" width="520">
-
-注意顺序：
+如果你只想手动写死坐标，也可以在脚本中修改上面的默认值。经纬度顺序是：
 
 ```text
 经度 longitude 在前
 纬度 latitude 在后
 ```
 
-## 8. 启用脚本
+也可以使用高德坐标拾取器辅助查坐标：
 
-保存脚本后，回到脚本列表，开启该脚本。
+<img src="../assets/zh-CN/tutorial/18-amap-coordinate-picker.jpg" alt="高德坐标拾取器" width="520">
+
+## 8. 确认脚本启用
+
+导入或保存脚本后，回到脚本列表，确认该脚本已经开启。
 
 <img src="../assets/zh-CN/tutorial/14-enable-script.jpg" alt="开启脚本" width="360">
 
@@ -161,7 +187,7 @@ https://gs-loc-cn.apple.com/clls/wloc
 成功时，响应头里应该能看到类似内容：
 
 ```text
-X-WLOC-ProxyPin: v5.3.0
+X-WLOC-ProxyPin: v5.4.2
 X-WLOC-Origin-Status: 200
 X-WLOC-Patched-Locations: 大于 0
 ```
@@ -178,6 +204,7 @@ X-WLOC-Patched-Locations: 大于 0
 - iPhone 没有走 ProxyPin 代理。
 - ProxyPin CA 没有安装或没有信任。
 - 代理过滤规则没有包含 `gs-loc-cn.apple.com`。
+- 如果打不开选点页，代理过滤规则没有包含 `www.baidu.com`。
 - 当前环境 GPS 信号很强，iOS 没有触发 WLOC 网络定位。
 
 ### 返回 400
