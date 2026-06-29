@@ -121,9 +121,21 @@ gs-loc.apple.com/clls/wloc
 
 建议优先使用 JSON 导入方式。ProxyPin 的脚本编辑器在长脚本下可能比较卡。
 
-## 7. 设置目标坐标
+## 7. 确认脚本启用
 
-保存并启用脚本后，在走 ProxyPin 代理的测试设备上打开：
+导入或保存脚本后，回到脚本列表，确认该脚本已经开启。
+
+<img src="../assets/zh-CN/tutorial/14-enable-script.jpg" alt="开启脚本" width="360">
+
+## 8. 开启抓包
+
+回到 ProxyPin 主界面，开启抓包。界面上出现红色方块按钮时，表示抓包已经开启。
+
+<img src="../assets/zh-CN/tutorial/15-start-capture.jpg" alt="开启抓包" width="360">
+
+## 9. 设置目标坐标
+
+抓包开启后，在走 ProxyPin 代理的测试设备上打开：
 
 ```text
 https://www.baidu.com/
@@ -131,7 +143,9 @@ https://www.baidu.com/
 
 页面会被脚本替换成 WLOC Location Picker。点击地图或使用 `Use GPS` 选择位置，确认坐标后点击 `Save`。
 
-<img src="../assets/zh-CN/tutorial/设置坐标的页面图.jpg" alt="WLOC Location Picker 设置坐标页面" width="360">
+如果抓包没有开启，或设备流量没有经过 ProxyPin，访问 `www.baidu.com` 时不会出现选点页面。
+
+<img src="../assets/zh-CN/tutorial/wloc-location-picker.jpg" alt="WLOC Location Picker 设置坐标页面" width="360">
 
 点击 `Save` 后，坐标会保存到 ProxyPin 的 `context.session` 中。后续 Apple WLOC 响应会自动使用这组坐标。
 
@@ -153,18 +167,6 @@ var TARGET_ACCURACY = 25;
 也可以使用高德坐标拾取器辅助查坐标：
 
 <img src="../assets/zh-CN/tutorial/18-amap-coordinate-picker.jpg" alt="高德坐标拾取器" width="520">
-
-## 8. 确认脚本启用
-
-导入或保存脚本后，回到脚本列表，确认该脚本已经开启。
-
-<img src="../assets/zh-CN/tutorial/14-enable-script.jpg" alt="开启脚本" width="360">
-
-## 9. 开启抓包
-
-回到 ProxyPin 主界面，开启抓包。界面上出现红色方块按钮时，表示抓包已经开启。
-
-<img src="../assets/zh-CN/tutorial/15-start-capture.jpg" alt="开启抓包" width="360">
 
 ## 10. 触发定位
 

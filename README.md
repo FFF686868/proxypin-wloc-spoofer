@@ -85,6 +85,10 @@ Chinese step-by-step tutorial with screenshots: [ProxyPin WLOC tutorial](docs/zh
 6. Pick a location on the Leaflet map and tap `Save`.
 7. Trigger iOS location on the test device.
 
+<p align="center">
+  <img src="docs/assets/zh-CN/tutorial/wloc-location-picker.jpg" alt="WLOC Location Picker" width="420">
+</p>
+
 The import file already matches these URLs:
 
    - `www.baidu.com/*`
